@@ -23,8 +23,11 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -47,8 +50,16 @@ public class DefaultNormalizer implements Normalizer {
 			outputFile.getParentFile().mkdirs();
 			FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
 			jarOutputStream = new JarOutputStream( new BufferedOutputStream(fileOutputStream));
-			for (Enumeration<JarEntry> en = jar.entries(); en.hasMoreElements();) {
-				JarEntry entry = en.nextElement();
+			ArrayList<JarEntry> entries = Collections.list(jar.entries());
+			Collections.sort(entries, new Comparator<JarEntry>() {
+
+				@Override
+				public int compare(JarEntry e1, JarEntry e2) {
+					return e1.getName().compareTo(e2.getName());
+				}
+			});
+			for (Iterator<JarEntry> iterator = entries.iterator(); iterator.hasNext();) {
+				JarEntry entry = iterator.next();
 				entry.setTime(timestamp.getTime());
 				
 				String resource = entry.getName();
