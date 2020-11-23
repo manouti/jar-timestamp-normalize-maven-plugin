@@ -67,10 +67,11 @@ public class DefaultNormalizer implements Normalizer {
 					manifestTransformer.normalizeManifest(jarOutputStream, jar, entry, timestamp);
 				} else if(resource.endsWith("/pom.properties")) {
 					pomPropertiesTransformer.normalizePropertiesFile(jarOutputStream, jar, entry, timestamp);
-				} else if (!entry.isDirectory()) {
-					InputStream inputStream = jar.getInputStream(entry);
-					jarOutputStream.putNextEntry(entry);
-					IOUtil.copy(inputStream, jarOutputStream);
+				} else {
+						InputStream inputStream = jar.getInputStream(entry);
+						jarOutputStream.putNextEntry(entry);
+					if (!entry.isDirectory())
+						IOUtil.copy(inputStream, jarOutputStream);
 				}
 			}
 		} catch (Throwable th) {
